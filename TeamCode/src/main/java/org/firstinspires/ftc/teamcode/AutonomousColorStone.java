@@ -45,6 +45,10 @@ public class AutonomousColorStone extends OpMode {
     CRServoState2 close4;
     clampDriveState strafeRight2;
     oneServo up;
+    timeState forward1;
+    timeState stop1;
+
+    timeState wait3;
 
     ArrayList<Servo> servoPickUp= new ArrayList<Servo>();
 
@@ -83,11 +87,11 @@ public class AutonomousColorStone extends OpMode {
         crServos.add(claw2);
 
         sensorDown = new oneServo(500, 0, mrServo);
-        strafeLeft = new driveState(30, .9, motors, "strafeLeft"); //before 28
+        strafeLeft = new driveState(29, .9, motors, "strafeLeft"); //before 30
         colorState = new ColorState(motors, mrSensor,"forward","alpha", 4500);
-        backwards = new timeState(600, .5, motors, "backward");
+        backwards = new timeState(450, .5, motors, "backward");//was 600
         colorState2 = new ColorState(motors, mrSensor,"forward", "alpha",4500);
-        backwards2 = new timeState(300, .5, motors, "backward");
+        backwards2 = new timeState(350, .5, motors, "backward");
         stop = new timeState(500, 0, motors, "forward");
         strafeLeftAgain = new driveState(14, .9, motors, "strafeLeft");
         reachOut = new extendArmState(1200, -.5, extendArm);
@@ -96,20 +100,23 @@ public class AutonomousColorStone extends OpMode {
         close3 = new CRServoState2(1500,-1,1, crServos);
         strafeRight = new clampDriveState(16,.9, motors, "strafeRight", -1, 1, crServos);
         close2 = new CRServoState2(1500, -1, 1, crServos);
-        turnLeft = new timeState(2100, .5, motors, "turnLeft"); //TODO: maybe lower time?
-        strafeLeft3 = new clampDriveState(33, .5, motors, "strafeLeft", -1,1,crServos);
-        strafeRight2 = new clampDriveState(25, .5, motors, "strafeRight", -1,1,crServos);
+        turnLeft = new timeState(2000, .5, motors, "turnLeft"); //TODO: maybe lower time?
+        strafeLeft3 = new clampDriveState(44, .3, motors, "strafeLeft", -1,1,crServos);
+        strafeRight2 = new clampDriveState(28, .5, motors, "strafeRight", -1,1,crServos);
         close4 = new CRServoState2(1500,-1,1, crServos);
-        forward = new timeState(2500, .5, motors, "forward");
+        forward = new timeState(0, .2, motors, "forward");
         open = new CRServoState(700, 1, -1, crServos);
-        park = new timeState (1500, .5, motors, "backward");
+        park = new timeState (400, .5, motors, "backward");
         up = new oneServo(500, .8, mrServo);
-
+        forward1= new timeState(2000,.5,motors,"forward");
+        stop1 = new timeState(2000, 0, motors, "stop");
+        wait3 = new timeState(1000,0,motors,"stop");
 
         sensorDown.setNextState(strafeLeft);
         strafeLeft.setNextState(colorState);
         colorState.setNextState(backwards);
-        backwards.setNextState(colorState2);
+        backwards.setNextState(wait3);
+        wait3.setNextState(colorState2);
         colorState2.setNextState(backwards2);
         backwards2.setNextState(stop);
         stop.setNextState(strafeLeftAgain);
@@ -123,7 +130,9 @@ public class AutonomousColorStone extends OpMode {
         close4.setNextState(strafeLeft3);
         strafeLeft3.setNextState(strafeRight2);
         strafeRight2.setNextState(forward);
-        forward.setNextState(open);
+        forward.setNextState(stop1);
+        stop1.setNextState(forward1);
+        forward1.setNextState(open);
         open.setNextState(park);
         park.setNextState(null);
 
@@ -137,10 +146,16 @@ public class AutonomousColorStone extends OpMode {
     }
     @Override
     public void loop()  {
-
-
+        telemetry.addData("sensor values", mrSensor.red());
+        telemetry.addData("boolean alpha", colorState.alpha);
         machine.update();
-
+        if (colorState.done) {
+            //TODO: Adjust this value based on distance from first block to bridge
+            forward.Time = (int)colorState.totalTime;
+            park.Time = (int)colorState.totalTime;
+            telemetry.addData("colorTime:",colorState.totalTime);
+            colorState.done = false;
+        }
     }
 
     @Override

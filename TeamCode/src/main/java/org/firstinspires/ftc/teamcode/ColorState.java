@@ -37,10 +37,11 @@ public class ColorState implements State {
     String color;
     public double totalTime;
     ElapsedTime mRuntime = new ElapsedTime();
+    ElapsedTime check = new ElapsedTime();
     boolean reset = true;
     int time1 = 0;
     boolean done = false;
-
+    boolean alpha = false;
     public ColorState(ArrayList<DcMotor> motor, ColorSensor colorSensor, String movement, String color1, int time) {
        time1=time;
         color=color1;
@@ -72,8 +73,10 @@ public class ColorState implements State {
             mRuntime.reset();
             reset = false;
         }
-        if(color == "alpha") {
-            if (mrSensor.alpha() < 2000 && mrSensor.alpha()>1000 && mRuntime.milliseconds() < time1) {
+        if(color == "alpha" || color == "red") { //was green
+            alpha=true;
+            if (mrSensor.red() > 250 && mRuntime.milliseconds() < time1) {
+                check.reset();
                 if (direction == "backward") {
                     leftFront.setPower(-.2);
                     rightFront.setPower(-.2);
@@ -86,7 +89,8 @@ public class ColorState implements State {
                     rightBack.setPower(.2);
                 }
                 return this;
-            } else {
+            }
+            else {
                 totalTime = mRuntime.milliseconds(); //sees block
                 rightFront.setPower(0);
                 leftFront.setPower(0);
@@ -101,7 +105,7 @@ public class ColorState implements State {
                 leftBack.setPower(-.5);
             }*/
 
-
+                done = true;
                 return NextState;
             }
         }
@@ -133,12 +137,12 @@ public class ColorState implements State {
                 rightBack.setPower(-.5);
                 leftBack.setPower(-.5);
             }*/
-
+                done = true;
                 return NextState;
             }
         }
     else{
-            if (mrSensor.red() > 10 && mRuntime.milliseconds() < time1) {
+            if (mrSensor.red() < 300 && mRuntime.milliseconds() < time1) {
                 if (direction == "backward") {
                     leftFront.setPower(-.2);
                     rightFront.setPower(-.2);

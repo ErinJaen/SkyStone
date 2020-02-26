@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "ColorStoneLeft", group = "Iterative OpMode")
+@Autonomous(name = "AutoTest2", group = "Iterative OpMode")
 
 public class AutoTest2 extends OpMode {
     DcMotor frontRight, frontLeft, backRight, backLeft, extendArm;
@@ -102,11 +102,9 @@ public class AutoTest2 extends OpMode {
         close4 = new CRServoState2(1500,-1,1, crServos);
 
 
-        
-
-        forward = new timeState(2500, .5, motors, "forward");
+        forward = new timeState(0, .5, motors, "forward");
         open = new CRServoState(700, 1, -1, crServos);
-        park = new timeState (1500, .5, motors, "backward");
+        park = new timeState (0, .5, motors, "backward");
         up = new oneServo(500, .8, mrServo);
 
 
@@ -144,6 +142,14 @@ public class AutoTest2 extends OpMode {
 
 
         machine.update();
+
+        if (colorState.done) {
+            //TODO: Adjust this value based on distance from first block to bridge
+            forward.Time = (int)colorState.totalTime;
+            park.Time = (int)colorState.totalTime;
+            telemetry.addData("colorTime:",colorState.totalTime);
+            colorState.done = false;
+        }
 
     }
 

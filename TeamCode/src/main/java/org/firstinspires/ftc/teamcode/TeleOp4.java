@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
+
 
 
 import com.qualcomm.robotcore.hardware.Servo;
@@ -24,10 +26,11 @@ public class TeleOp4 extends OpMode {
     Servo wrist, mrClamp, drag1, mrServo;
 
     boolean clamp = false;
+
     int powerButton;
     double wristAngle = 0;
     double clampPos=.7;
-    double draga;
+    double draga = .4;
     double mrServox = .5;
 
     ColorSensor mrSensor;
@@ -97,23 +100,23 @@ public class TeleOp4 extends OpMode {
 
 
         //              ###CAPSTONE SERVO###
-        if (gamepad1.b/* && draga > -.5*/){
-            draga  -= 0.01;
+        if (gamepad1.a && draga > 0){
+            draga  -= 0.05;
         }
-        else if (gamepad1.a && draga< .4){
-            draga += 0.01;
+        else if (gamepad1.b && draga< .45){
+            draga += 0.05;
         }
 
         drag1.setPosition(draga);
         telemetry.addData("Drag servo pos should be", draga);
-        telemetry.addData("what it atually is", drag1.getPosition());
+        telemetry.addData("what it actually is", drag1.getPosition());
 
         //             ###COLOR SENSOR SERVO###
-        if (gamepad1.x) {
-            mrServox -=0.01;
+        if (gamepad1.x && mrServox>0) {
+            mrServox -=0.05;
         }
-        else if (gamepad1.y){
-            mrServox +=0.01;
+        else if (gamepad1.y && mrServox<.64){
+            mrServox +=0.05;
         }
 
         mrServo.setPosition(mrServox);
@@ -121,15 +124,15 @@ public class TeleOp4 extends OpMode {
 
 
         //             ###COLOR SENSOR###
-        telemetry.addData("mrSensor values", mrSensor.alpha());
+        telemetry.addData("mrSensor values", mrSensor.red());
 
 
         //           ###FOUNDATION SERVO###
-        if (gamepad1.right_bumper && clampPos>.28){
-            clampPos  -= 0.01;
+        if (gamepad1.right_bumper && clampPos>.33){ //.28
+            clampPos  -= 0.05;
         }
-        else if (gamepad1.left_bumper && clampPos<.90){
-            clampPos += 0.01;
+        else if (gamepad1.left_bumper && clampPos<.85){
+            clampPos += 0.05;
         }
 
 
@@ -137,7 +140,7 @@ public class TeleOp4 extends OpMode {
 
         //          -----GAME PAD 2-----
 
-        //              ###CLAMPS###
+        //              ###CLAWS###
 
 
         if (gamepad2.x){
@@ -157,7 +160,6 @@ public class TeleOp4 extends OpMode {
             claw1.setPower(-1);
             claw2.setPower(1);
         }
-
 
 
         //              ###ARM EXTENSION###
