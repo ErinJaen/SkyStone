@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
 
@@ -24,6 +26,8 @@ public class TeleOp4 extends OpMode {
     DcMotor extendArm;
     CRServo claw1, claw2, drag2;
     Servo wrist, mrClamp, drag1, mrServo;
+    DigitalChannel touchSense;
+    //TouchSensor touchSense;
 
     boolean clamp = false;
 
@@ -31,7 +35,7 @@ public class TeleOp4 extends OpMode {
     double wristAngle = 0;
     double clampPos=.7;
     double draga = .4;
-    double mrServox = .5;
+    double mrServox = .7; //was .5
 
     ColorSensor mrSensor;
 
@@ -53,6 +57,10 @@ public class TeleOp4 extends OpMode {
         mrClamp = hardwareMap.servo.get("mrClamp");
         mrServo = hardwareMap.servo.get("mrServo");
         mrSensor = hardwareMap.get(ColorSensor.class, "mrSensor");
+        touchSense = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+        //touchSense = hardwareMap.touchSensor.get("sensor_digital");
+
+        //touchSense.setMode(DigitalChannel.Mode.INPUT);
     }
 
 
@@ -115,7 +123,7 @@ public class TeleOp4 extends OpMode {
         if (gamepad1.x && mrServox>0) {
             mrServox -=0.05;
         }
-        else if (gamepad1.y && mrServox<.64){
+        else if (gamepad1.y && mrServox<.7){ //was.64
             mrServox +=0.05;
         }
 
@@ -168,7 +176,7 @@ public class TeleOp4 extends OpMode {
 
         //              ###WRIST###
 
-        if (gamepad2.right_bumper && wristAngle>-0.7){
+        if (gamepad2.right_bumper && wristAngle>-1){
             wristAngle  -= 0.01;
         }
         else if (gamepad2.left_bumper && wristAngle<0.7){
@@ -181,8 +189,33 @@ public class TeleOp4 extends OpMode {
 
         //              ###ARM RAISING###
 
-        raiseArm2.setPower(-gamepad2.left_stick_y);
-
+        if(touchSense.getState() == false){
+            if(gamepad2.left_stick_y<0){
+                raiseArm2.setPower(-gamepad2.left_stick_y);
+            }
+            else{
+                raiseArm2.setPower(0);
+            }
+            telemetry.addData("Digital Touch", "Is Pressed");
+        }
+        else {
+            raiseArm2.setPower(-gamepad2.left_stick_y);
+            telemetry.addData("Digital Touch", "Is Not Pressed");
+        }
+/*
+        if(touchSense.isPressed()){
+            if(gamepad2.left_stick_y>0){
+                raiseArm2.setPower(-gamepad2.left_stick_y);
+            }
+            else{
+                raiseArm2.setPower(0);
+            }
+        }
+        else{
+            raiseArm2.setPower(-gamepad2.left_stick_y);
+        }
+        */
+        //raiseArm2.setPower(-gamepad2.left_stick_y);
         telemetry.update();
 
 

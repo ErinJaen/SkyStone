@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -10,17 +10,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
 import java.util.ArrayList;
 
-@Autonomous(name = "ColorStoneLeft", group = "Iterative OpMode")
+@Autonomous(name = "IMU State Test", group = "Iterative OpMode")
 
-public class AutonomousColorStone extends OpMode {
+public class IMUStateTest extends OpMode {
     DcMotor frontRight, frontLeft, backRight, backLeft, extendArm;
     CRServo claw1, claw2;
     ColorSensor mrSensor;
@@ -34,7 +28,7 @@ public class AutonomousColorStone extends OpMode {
     extendArmState reachOut;
     private StateMachine machine;
     clampDriveState strafeRight;
-    timeState turnLeft;
+    GyroTurnCCWByPID turnLeft;
     CRServoState2 close;
     CRServoState open;
     CRServoState2 close2;
@@ -119,8 +113,7 @@ public class AutonomousColorStone extends OpMode {
         close3 = new CRServoState2(1500,-1,1, crServos);
         strafeRight = new clampDriveState(16,.9, motors, "strafeRight", -1, 1, crServos);
         close2 = new CRServoState2(1500, -1, 1, crServos);
-        turnLeft = new timeState(2000, .5, motors, "turnLeft"); //TODO: maybe lower time?
-
+        turnLeft = new GyroTurnCCWByPID(180,.45,motors, imu); //TODO: maybe lower time?
         strafeLeft3 = new clampDriveState(44, .3, motors, "strafeLeft", -1,1,crServos);
         strafeRight2 = new clampDriveState(28, .5, motors, "strafeRight", -1,1,crServos);
         close4 = new CRServoState2(1500,-1,1, crServos);

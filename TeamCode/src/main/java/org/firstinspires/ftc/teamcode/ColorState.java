@@ -75,7 +75,7 @@ public class ColorState implements State {
         }
         if(color == "alpha" || color == "red") { //was green
             alpha=true;
-            if (mrSensor.red() > 250 && mRuntime.milliseconds() < time1) {
+            if (mrSensor.red() > 220 && mRuntime.milliseconds() < time1) {
                 check.reset();
                 if (direction == "backward") {
                     leftFront.setPower(-.2);
