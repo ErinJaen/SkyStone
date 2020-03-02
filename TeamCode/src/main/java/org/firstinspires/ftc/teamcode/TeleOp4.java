@@ -32,7 +32,7 @@ public class TeleOp4 extends OpMode {
     boolean clamp = false;
 
     int powerButton;
-    double wristAngle = 0;
+    double wristAngle = 0.5;//was 0
     double clampPos=.7;
     double draga = .4;
     double mrServox = .7; //was .5
